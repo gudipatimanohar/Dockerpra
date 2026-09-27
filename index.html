@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Movie Tickets · CineVerse</title>
+  <!-- Font Awesome 6 (free) -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Roboto, system-ui, sans-serif;
+    }
+
+    body {
+      background: linear-gradient(145deg, #0b0f1c 0%, #1a1f2f 100%);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 1.5rem;
+    }
+
+    .ticket-card {
+      max-width: 900px;
+      width: 100%;
+      background: #f8faff;
+      border-radius: 2.5rem;
+      box-shadow: 0 30px 45px -15px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(255, 255, 255, 0.06) inset;
+      overflow: hidden;
+      transition: transform 0.2s ease;
+    }
+
+    /* main ticket area */
+    .ticket-main {
+      display: flex;
+      flex-wrap: wrap;
+      background: #ffffff;
+    }
+
+    /* left section — movie info & poster */
+    .movie-visual {
+      flex: 1.1;
+      min-width: 260px;
+      background: #10131f;
+      padding: 2rem 1.8rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      color: #fff;
+      position: relative;
+      isolation: isolate;
+    }
+
+    .movie-visual::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 30% 40%, rgba(255, 215, 100, 0.08), transparent 70%);
+      pointer-events: none;
+    }
+
+    .poster-frame {
+      display: flex;
+      flex-direction: column;
+      gap: 1.2rem;
+    }
+
+    .poster {
+      background: linear-gradient(145deg, #2f354a, #1b1f2c);
+      border-radius: 1.2rem;
+      padding: 1.2rem 0.8rem;
+      text-align: center;
+      box-shadow: 0 12px 18px -8px rgba(0, 0, 0, 0.6), 0 0 0 1px #3a4055 inset;
+      border: 1px solid #5d6b8a;
+    }
+
+    .poster i {
+      font-size: 5rem;
+      color: #ffd966;
+      filter: drop-shadow(0 6px 8px #00000055);
+      margin-bottom: 0.4rem;
+    }
+
+    .poster h2 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      background: linear-gradient(135deg, #f5e6b0, #d4b15b);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      margin-top: 0.2rem;
+    }
+
+    .poster .tagline {
+      font-size: 0.75rem;
+      color: #a2adc9;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      margin-top: 0.25rem;
+    }
+
+    .movie-details {
+      margin-top: 0.8rem;
+    }
+
+    .movie-title {
+      font-size: 1.7rem;
+      font-weight: 800;
+      line-height: 1.2;
+      color: #fff;
+      letter-spacing: -0.02em;
+    }
+
+    .movie-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin-top: 0.6rem;
+      color: #b9c2da;
+      font-size: 0.9rem;
+      font-weight: 500;
+    }
+
+    .movie-meta i {
+      color: #f3c26b;
+      margin-right: 0.3rem;
+    }
+
+    .rating-badge {
+      background: #253045;
+      border-radius: 30px;
+      padding: 0.3rem 0.9rem;
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: #ffdb8e;
+      border: 1px solid #4c5b7a;
+      display: inline-block;
+      margin-top: 0.6rem;
+    }
+
+    /* right section — ticket stub & booking */
+    .booking-stub {
+      flex: 1.9;
+      min-width: 300px;
+      background: #ffffff;
+      padding: 2rem 2rem 1.8rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+      border-left: 3px dashed #b7c0d6;
+    }
+
+    /* decorative stub edge */
+    .booking-stub::before,
+    .booking-stub::after {
+      content: '';
+      position: absolute;
+      left: -12px;
+      width: 22px;
+      height: 22px;
+      background: #0b0f1c; /* matches outer bg */
+      border-radius: 50%;
+      box-shadow: 0 0 0 3px #f8faff;
+    }
+
+    .booking-stub::before {
+      top: 35px;
+    }
+
+    .booking-stub::after {
+      bottom: 35px;
+    }
+
+    .stub-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.5rem;
+    }
+
+    .stub-header h3 {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #1e2437;
+      letter-spacing: -0.01em;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .stub-header h3 i {
+      color: #d4a02b;
+      font-size: 1.2rem;
+    }
+
+    .barcode {
+      font-size: 1.4rem;
+      letter-spacing: 4px;
+      color: #30364b;
+      opacity: 0.6;
+      font-weight: 600;
+    }
+
+    /* showtime selection */
+    .showtime-section {
+      margin-top: 1.2rem;
+    }
+
+    .label {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      font-weight: 700;
+      color: #6a738b;
+      margin-bottom: 0.6rem;
+      display: block;
+    }
+
+    .showtimes {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.8rem;
+      margin-bottom: 1rem;
+    }
+
+    .time-btn {
+      background: #f0f4ff;
+      border: 1.5px solid #d3dcee;
+      color: #1d2335;
+      font-weight: 600;
+      font-size: 1rem;
+      padding: 0.6rem 1.2rem;
+      border-radius: 2rem;
+      cursor: default;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      transition: all 0.15s;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+    }
+
+    .time-btn i {
+      color: #b2811e;
+      font-size: 0.9rem;
+    }
+
+    .time-btn.active {
+      background: #22293d;
+      border-color: #22293d;
+      color: white;
+      box-shadow: 0 8px 12px -6px rgba(0, 0, 0, 0.3);
+    }
+
+    .time-btn.active i {
+      color: #ffd966;
+    }
+
+    /* seat selection */
+    .seat-section {
+      margin: 1rem 0 1.2rem;
+    }
+
+    .screen-indicator {
+      text-align: center;
+      font-size: 0.7rem;
+      color: #8391b0;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      margin-bottom: 0.8rem;
+      font-weight: 600;
+    }
+
+    .screen-indicator i {
+      margin-right: 0.3rem;
+      color: #c0a25b;
+    }
+
+    .seat-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 0.45rem;
+      align-items: center;
+    }
+
+    .seat-row {
+      display: flex;
+      gap: 0.45rem;
+      justify-content: center;
+    }
+
+    .seat {
+      width: 32px;
+      height: 32px;
+      background: #d9e0ef;
+      border-radius: 8px 8px 6px 6px;
+      border: 1px solid #b9c4dd;
+      box-shadow: 0 2px 3px rgba(0, 0, 0, 0.05);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.7rem;
+      font-weight: 600;
+      color: #30364b;
+      cursor: default;
+      transition: all 0.1s;
+    }
+
+    .seat.available {
+      background: #eef3fe;
+      border-color: #b2c0db;
+    }
+
+    .seat.selected {
+      background: #ffd966;
+      border-color: #b37f1a;
+      color: #1e1a0c;
+      box-shadow: 0 4px 8px rgba(255, 210, 80, 0.4);
+      font-weight: 700;
+    }
+
+    .seat.occupied {
+      background: #b8c1d6;
+      border-color: #8d99b5;
+      color: #5b637c;
+      opacity: 0.7;
+    }
+
+    .seat.aisle-gap {
+      background: transparent;
+      border: none;
+      box-shadow: none;
+      width: 10px;
+    }
+
+    /* price & booking */
+    .price-summary {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 1.4rem;
+      padding-top: 1rem;
+      border-top: 2px dashed #d9e1f0;
+    }
+
+    .total-price {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .total-price span:first-child {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: #7b849e;
+      font-weight: 600;
+    }
+
+    .total-price .amount {
+      font-size: 2rem;
+      font-weight: 800;
+      color: #1b2237;
+      line-height: 1.1;
+      letter-spacing: -0.02em;
+    }
+
+    .total-price .amount small {
+      font-size: 0.9rem;
+      font-weight: 500;
+      color: #5e6b8c;
+    }
+
+    .book-btn {
+      background: #1e263a;
+      border: none;
+      color: white;
+      font-weight: 700;
+      font-size: 1.1rem;
+      padding: 0.9rem 2rem;
+      border-radius: 3rem;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      cursor: default;
+      box-shadow: 0 10px 18px -8px #0b0f1c99, 0 0 0 1px #3d4762 inset;
+      transition: all 0.1s;
+      letter-spacing: 0.3px;
+    }
+
+    .book-btn i {
+      color: #ffd966;
+      font-size: 1.1rem;
+    }
+
+    /* small footer inside ticket */
+    .ticket-footer {
+      margin-top: 1.2rem;
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.65rem;
+      color: #98a3bb;
+      font-weight: 500;
+      letter-spacing: 0.3px;
+    }
+
+    .ticket-footer i {
+      margin-right: 0.3rem;
+      color: #b4933c;
+    }
+
+    /* responsiveness */
+    @media (max-width: 700px) {
+      body {
+        padding: 0.8rem;
+      }
+
+      .ticket-card {
+        border-radius: 1.8rem;
+      }
+
+      .booking-stub {
+        padding: 1.5rem 1.4rem;
+      }
+
+      .booking-stub::before,
+      .booking-stub::after {
+        width: 18px;
+        height: 18px;
+        left: -10px;
+      }
+
+      .movie-visual {
+        padding: 1.5rem 1.2rem;
+      }
+
+      .movie-title {
+        font-size: 1.5rem;
+      }
+
+      .time-btn {
+        padding: 0.4rem 1rem;
+        font-size: 0.9rem;
+      }
+
+      .seat {
+        width: 28px;
+        height: 28px;
+        font-size: 0.6rem;
+      }
+
+      .book-btn {
+        padding: 0.7rem 1.5rem;
+        font-size: 1rem;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .seat {
+        width: 24px;
+        height: 24px;
+        font-size: 0.55rem;
+      }
+
+      .price-summary {
+        flex-direction: column;
+        gap: 1rem;
+        align-items: flex-start;
+      }
+
+      .book-btn {
+        width: 100%;
+        justify-content: center;
+      }
+
+      .stub-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.3rem;
+      }
+
+      .barcode {
+        font-size: 1.1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="ticket-card">
+    <!-- main ticket area -->
+    <div class="ticket-main">
+      <!-- left side: movie info / poster -->
+      <div class="movie-visual">
+        <div class="poster-frame">
+          <div class="poster">
+            <i class="fas fa-film"></i>
+            <h2>DUNE: PART TWO</h2>
+            <div class="tagline">long live the fighters</div>
+          </div>
+          <div class="movie-details">
+            <div class="movie-title">Dune: Part Two</div>
+            <div class="movie-meta">
+              <span><i class="fas fa-clock"></i> 2h 46m</span>
+              <span><i class="fas fa-star"></i> 8.8/10</span>
+              <span><i class="fas fa-globe"></i> IMAX</span>
+            </div>
+            <div class="rating-badge">
+              <i class="fas fa-shield-alt"></i> PG-13 · Sci-Fi/Adventure
+            </div>
+          </div>
+        </div>
+        <div style="font-size: 0.7rem; color: #7b89a8; margin-top: 1rem;">
+          <i class="fas fa-map-pin" style="color: #c9a23d;"></i> CineVerse · Hall 4
+        </div>
+      </div>
+
+      <!-- right side: booking stub -->
+      <div class="booking-stub">
+        <div>
+          <div class="stub-header">
+            <h3><i class="fas fa-ticket-alt"></i> E-TICKET</h3>
+            <div class="barcode">||| || ||| ||</div>
+          </div>
+          
+          <!-- showtimes -->
+          <div class="showtime-section">
+            <span class="label"><i class="far fa-calendar-alt" style="margin-right: 4px;"></i> Tuesday, Apr 15</span>
+            <div class="showtimes">
+              <div class="time-btn"><i class="far fa-clock"></i> 14:30</div>
+              <div class="time-btn active"><i class="fas fa-clock"></i> 18:45</div>
+              <div class="time-btn"><i class="far fa-clock"></i> 22:10</div>
+            </div>
+          </div>
+
+          <!-- seat selection -->
+          <div class="seat-section">
+            <div class="screen-indicator">
+              <i class="fas fa-tv"></i> SCREEN
+            </div>
+            <div class="seat-grid">
+              <!-- Row 1 (A) -->
+              <div class="seat-row">
+                <div class="seat occupied">A1</div>
+                <div class="seat occupied">A2</div>
+                <div class="seat available">A3</div>
+                <div class="seat available">A4</div>
+                <div class="seat available">A5</div>
+                <div class="seat occupied">A6</div>
+                <div class="seat occupied">A7</div>
+              </div>
+              <!-- Row 2 (B) - with aisle gap -->
+              <div class="seat-row">
+                <div class="seat available">B1</div>
+                <div class="seat available">B2</div>
+                <div class="seat aisle-gap"></div>
+                <div class="seat selected">B3</div>
+                <div class="seat selected">B4</div>
+                <div class="seat aisle-gap"></div>
+                <div class="seat available">B5</div>
+                <div class="seat occupied">B6</div>
+              </div>
+              <!-- Row 3 (C) -->
+              <div class="seat-row">
+                <div class="seat occupied">C1</div>
+                <div class="seat available">C2</div>
+                <div class="seat available">C3</div>
+                <div class="seat available">C4</div>
+                <div class="seat available">C5</div>
+                <div class="seat occupied">C6</div>
+                <div class="seat occupied">C7</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- price & book -->
+          <div class="price-summary">
+            <div class="total-price">
+              <span>TOTAL · 2 SEATS</span>
+              <div class="amount">$32.50 <small>USD</small></div>
+            </div>
+            <div class="book-btn">
+              <i class="fas fa-check-circle"></i> BOOK NOW
+            </div>
+          </div>
+
+          <!-- small footer -->
+          <div class="ticket-footer">
+            <span><i class="fas fa-qrcode"></i> #DV2415B3</span>
+            <span><i class="fas fa-print"></i> e-ticket</span>
+            <span><i class="fas fa-clock"></i> 18:45 · 4/15</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
